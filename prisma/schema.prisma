@@ -1,0 +1,69 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL") //"postgresql://Mkhululi:Mvulane2@@12345@localhost:5432/trusted-payment?schema=sample" //env("DATABASE_URL")
+}
+
+model Sender {
+  id           Int            @id @default(autoincrement())
+  payType      String
+  contact      String         @db.VarChar(20)
+  createdAt    DateTime       @default(now())
+  Transactions Transactions[]
+  Recipient    Recipient[]
+}
+
+model Recipient {
+  id                   Int    @id @default(autoincrement())
+  name                 String
+  surname              String
+  identificationNumber String
+  contact              String @db.VarChar(20)
+  sender               Sender @relation(fields: [senderId], references: [id])
+  senderId             Int
+}
+
+model Transactions {
+  id        Int         @id @default(autoincrement())
+  amount    String      @db.VarChar(50)
+  validDays Int
+  Status    Int         @default(0)
+  createdAt DateTime    @default(now())
+  sender    Sender      @relation(fields: [senderId], references: [id])
+  senderId  Int
+  reference String
+  Chargies  Chargies[]
+  Vourchers Vourchers[]
+}
+
+model Chargies {
+  id             Int           @id @default(autoincrement())
+  charge         String        @db.VarChar(50)
+  Transaction    Transactions? @relation(fields: [transactionsId], references: [id])
+  transactionsId Int
+}
+
+model Vourchers {
+  id             Int          @id @default(autoincrement())
+  vorcherNo      String       @db.VarChar(20)
+  pin            String       @db.VarChar(20)
+  Transaction    Transactions @relation(fields: [transactionsId], references: [id])
+  transactionsId Int
+}
+
+model Users {
+  id        Int      @id @default(autoincrement())
+  username  String   @db.VarChar(20)
+  password  String   @db.VarChar(20)
+  contact   String   @db.VarChar(20)
+  createdAt DateTime @default(now())
+}
