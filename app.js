@@ -2,13 +2,12 @@
 const express = require('express')
 const app = express()
 const morgan = require('morgan')
-const cors = require('cors')
 const transactions = require('./api/routes/transactions')
 
 const bodyParser = require("body-parser")
 
-app.use(bodyParser.json({ limit: '70mb' }))
-app.use(bodyParser.urlencoded({ limit: '70mb', extended: false }))
+app.use(bodyParser.json())
+app.use(bodyParser.urlencoded({ extended: false }))
 
 app.use(morgan('dev'))
 
@@ -27,7 +26,7 @@ app.use((req, res, next) => {
     }
 })
 
-app.use(cors())
+
 
 app.use(express.json())
 
